@@ -31,6 +31,10 @@ python app.py
 
 and load the webpage that's being served. Put your username in that brown box and click start!
 
+## After running the sudoku web app
+
+After running some iterations, you can find visualizations of the time-curve getting updated in `./data/images`. You can also find a summary of the experiment (more precisely, a JSON representation of the `SudokuExperiment` class in `sudoku_experiment.py`) in `./data/experiments/sudoku`.
+
 ## Some details
 
 ### Modifying the config file
