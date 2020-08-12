@@ -14,7 +14,6 @@ Unzip `data.zip` in this directory. After that, it should look like this:
 │   ├── priors
 │   │   └── 9x9.csv
 │   └── sudokus
-│       ├── sudoku.csv
 │       └── sudoku.json
 ```
 
