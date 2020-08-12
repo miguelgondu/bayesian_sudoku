@@ -19,7 +19,8 @@ kappa = 0.5
 se = SudokuExperiment(
     size,
     goal,
-    name="local_testing"
+    name="local_testing",
+    debugging=True
 )
 
 start = None
@@ -53,7 +54,6 @@ def next():
     print(f"next hints: {se.next_hints}")
     print(f"next sudoku: {next_sudoku}")
     return render_template("next.html", sudoku=next_sudoku, username=username)
-
 
 @app.route("/solution", methods=["POST"])
 def solution():
@@ -106,6 +106,10 @@ def solution():
     # TODO: implement what happens if not solved.
     return render_template("solution.html", solved=solved, message=message, username=data["username"])
 
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 if __name__ == "__main__":
     print("Serving the web app")

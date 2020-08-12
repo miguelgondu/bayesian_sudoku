@@ -46,7 +46,7 @@ class SudokuExperiment:
     - Write this docstring.
     - Implement loading from a prior.
     """
-    def __init__(self, size, goal, domain=None, name=None, kappa=0.03, curriculum=[], load_prior=True):
+    def __init__(self, size, goal, domain=None, name=None, kappa=0.03, curriculum=[], load_prior=True, debugging=False):
         self.timestamp = str(time.time()).replace(".", "")
         self.size = size
         self.goal = goal
@@ -100,6 +100,8 @@ class SudokuExperiment:
 
         self.real_map = None
         self.variance_map = None
+
+        self.debugging = debugging
 
     def save(self):
         """
@@ -192,6 +194,8 @@ class SudokuExperiment:
         TODO: This docstring will change once we model log(t)
         instead of t.
         '''
+        if self.debugging:
+            return 80
         ei = self.expected_improvement()
         return self.domain[np.argmax(ei)]
 
@@ -286,6 +290,8 @@ class SudokuExperiment:
         return a_sudoku
 
     def visualize(self, domain=None):
+        if debugging:
+            return
         _, axes = plt.subplots(2, 2, figsize=(10, 10))
 
         ax1, ax2 = axes[0, 0], axes[0, 1]
