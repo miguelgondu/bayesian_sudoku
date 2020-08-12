@@ -25,8 +25,6 @@ from scipy.stats import norm
 from sudoku_utilities import string_to_sudoku
 from sudoku_solver import solve
 
-from bayesian_optimization import BayesianOptimization
-
 with open("config.json") as fp:
     config = json.load(fp)
 
