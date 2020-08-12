@@ -14,7 +14,7 @@ body {
 }
 
 p {
-  font-size: 3vw;
+  font-size: 20px;
   text-align: center;
   margin: 3%;
   margin-left: 5%;
@@ -37,19 +37,20 @@ p {
 
 h1 {
   margin      : 5%;
-  font-size   : 6vw;
+  font-size   : 40px;
   font-weight : bold;
   text-align  : center;
 }
 
 h2 {
-  font-size: 4vw;
+  font-size: 30px;
   text-align  : center;
 }
 
 .content-container {
   display: flex;
   width: auto;
+  border-radius: 10px;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
@@ -74,20 +75,23 @@ h2 {
 
 .game-container {
   display: flex;
+  width: auto;
+  border-radius: 10px;
   flex-direction: column;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
   /* position      : relative;
   box-sizing    : border-box; */
   
-  height        : 600px;
-  width         : 500px;
+  /* height        : 700px;
+  width         : 500px; */
   margin-top    : 40px;
   padding       : 15px;
+  margin: 10%;
   
   cursor        : default;
   background    : #A49E8D;
-  border-radius : 6px;
 }
 
 .fadein-container {
