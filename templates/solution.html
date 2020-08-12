@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="align-items: center;">
+  {% if solved %}
+    <p>Congratulations!</p>
+    {% else %}
+    <p>Oops!</p>
+  {% endif %}
+  <p>{{ message }}</p>
+
+  <!-- <img src="{{url_to_image}}" alt="Chart"> -->
+
+  <form action="{{ url_for('next') }}" method="POST">
+    <div class="username-container">
+      <input type="text" name="username", value="{{username}}" readonly>
+    </div>
+    <input type="submit" value="Start">
+  </form>
+</div>
+{% endblock %}

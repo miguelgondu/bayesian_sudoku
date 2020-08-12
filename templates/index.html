@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block content %}
+<div>
+  <h1>Adaptive Sudoku</h1>
+  <form action="{{ url_for('next') }}" method="POST">
+    <div class="username-container">
+      <input type="text" name="username" autocomplete="off">
+    </div>
+    <br/>
+    <input type="submit" value="Start">
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="game-container">
+  <div class="grid-container">
+    <form action="{{ url_for('solution') }}" method="post" name="sudoku-input" autocomplete="off">
+      {% for i in range(sudoku | length) %}
+        <div class="grid-row">
+          {% for j in range(sudoku[0] | length) %}
+            {% if sudoku[i][j] == 0 %}
+            <div class="grid-cell">
+              <input type="text" maxlength="1" name='solved_sudoku[{{i}}][{{j}}]' class="def-txt-input">
+            </div>
+            {% else %}
+            <div class="grid-cell-prefilled">
+                <input type="number" maxlength="1" name='solved_sudoku[{{i}}][{{j}}]' value="{{ sudoku[i][j] }}" readonly>
+            </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endfor %}
+      <div class="username-container">
+        <input type="text" value={{username}} name="username" readonly>
+      </div>
+      <div class="button-container">
+        <input type="submit" value="Solve" class="btn btn-primary btn-block">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
