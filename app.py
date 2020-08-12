@@ -19,7 +19,8 @@ kappa = 0.5
 se = SudokuExperiment(
     size,
     goal,
-    name="local_testing"
+    name="local_testing",
+    debugging=True
 )
 
 start = None
@@ -108,7 +109,7 @@ def solution():
 
 @app.route("/about")
 def about():
-    return "hola"
+    return render_template("about.html")
 
 if __name__ == "__main__":
     print("Serving the web app")
