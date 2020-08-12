@@ -127,13 +127,12 @@ class SudokuExperiment:
         # The way the Kaggle's database of sudokus is
         # structured is by having two columns: puzzle,solved.
         # we grab the solved ones.
-        corpus_strings = pd.read_csv(
-            path,
-            delimiter=","
-        ).values[:, 1].astype(str)
+        with open(f"{PATH_TO_SUDOKUS}/sudoku.json") as fp:
+            corpus = json.load(fp)
 
+        # Transform them to sudokus
         corpus = [
-            string_to_sudoku(s) for s in corpus_strings
+            string_to_sudoku(s) for s in corpus
         ]
 
         return corpus

@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 def prior_in_log_space(h):
     return np.log(600 + ((600 - 3) / (17 - 80)) * (h - 17))
 
-
 # Computing it.
 domain = np.arange(17, 81)
 prior = prior_in_log_space(domain)
