@@ -136,6 +136,7 @@ class SudokuExperiment:
         with open(f"{PATH_TO_SUDOKUS}/sudoku.json") as fp:
             corpus = json.load(fp)
 
+        random.shuffle(corpus)
         # Transform them to sudokus
         corpus = [
             string_to_sudoku(s) for s in corpus
