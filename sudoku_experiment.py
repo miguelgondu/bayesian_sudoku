@@ -15,6 +15,7 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 import random
+import time
 from itertools import product
 
 from sklearn.gaussian_process import GaussianProcessRegressor
@@ -48,6 +49,7 @@ class SudokuExperiment:
     - Implement loading from a prior.
     """
     def __init__(self, size, goal, domain=None, name=None, kappa=0.03, curriculum=[], load_prior=True):
+        self.timestamp = str(time.time()).replace(".", "")
         self.size = size
         self.goal = goal
         self.name = name
@@ -65,6 +67,7 @@ class SudokuExperiment:
         # I should implement this by just passing the path to the prior
         # or by passing a float (e.g. when we want a flat
         # prior at 0 or something).
+        print("Loading prior.")
         self.prior_array = np.loadtxt(
             f"{PATH_TO_PRIORS}/{size}x{size}.csv", delimiter=","
         )
@@ -76,10 +79,13 @@ class SudokuExperiment:
             self.prior = {
                 int(self.prior_array[k, 0]): 0 for k in range(len(self.prior_array))
             }
+        
+        print("Creating the sudoku corpus.")
         self.sudoku_corpus = self._create_sudoku_corpus(
             f"{PATH_TO_SUDOKUS}/sudokus_{size}x{size}.csv"
         )
 
+        print("Instantiating the GPR.")
         self.kernel = 1*RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
         self.gpr = GaussianProcessRegressor(kernel=self.kernel)
 
@@ -116,7 +122,7 @@ class SudokuExperiment:
             "real_map": {k: float(v) for k, v in self.real_map.items()},
             "variance_map": {k: float(v) for k, v in self.variance_map.items()}
         }
-        with open(f"{PATH_TO_EXPERIMENTS}/sudoku_experiment_{self.name}.json", "w") as fp:
+        with open(f"{PATH_TO_EXPERIMENTS}/{self.timestamp}_sudoku_experiment_{self.name}.json", "w") as fp:
             json.dump(as_json, fp)
 
     def _create_sudoku_corpus(self, path):

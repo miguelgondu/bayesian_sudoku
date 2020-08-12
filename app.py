@@ -12,16 +12,15 @@ app = Flask(__name__)
 # Squelch a warning
 plt.switch_backend('Agg')
 
+print("Creating the Sudoku Experiment object")
 size = 9
 goal = 2 * 60
-comment = "Jeppe_2020_08_11"
 kappa = 0.5
 se = SudokuExperiment(
     size,
     goal,
-    name=f"{comment}_{size}_{goal}"
+    name="local_testing"
 )
-se.visualize()
 
 start = None
 counter = 0
@@ -40,6 +39,8 @@ def next():
 
     data = request.form
     username = data["username"]
+    if username not in se.name:
+        se.name = username + "_" + se.name
     start = time.time()
 
     # TODO: add logic of registering the username and
@@ -48,7 +49,8 @@ def next():
     # more than once.
 
     next_sudoku = se.next_sudoku()
-    print(se.acquisition())
+    # print(se.acquisition())
+    print(f"next hints: {se.next_hints}")
     print(f"next sudoku: {next_sudoku}")
     return render_template("next.html", sudoku=next_sudoku, username=username)
 
@@ -88,9 +90,11 @@ def solution():
     # implement the database logic.
     if solved:
         # Fitting the GP
+        print("Registering time.")
         se.register_time(time_it_took)
 
         # Plotting the mean of the GP and the acquisition for debugging
+        print("Visualizing.")
         se.visualize()
     else:
         # TODO: remove the last hint, or re-plan how the hints are
@@ -104,4 +108,5 @@ def solution():
 
 
 if __name__ == "__main__":
+    print("Serving the web app")
     app.run(debug=True)
