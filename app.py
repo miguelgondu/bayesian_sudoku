@@ -92,11 +92,13 @@ def solution():
         print("Registering time.")
         se = SudokuExperiment.from_json(session["se"])
         se.register_time(time_it_took)
-        session["se"] = se.to_json()
 
         # Plotting the mean of the GP and the acquisition for debugging
-        # print("Visualizing.")
-        # se.visualize()
+        print("Visualizing.")
+        se.visualize()
+
+        # Saving after fitting the GP
+        session["se"] = se.to_json()
     else:
         # TODO: remove the last hint, or re-plan how the hints are
         # being kept.
@@ -105,7 +107,11 @@ def solution():
         pass
 
     # TODO: implement what happens if not solved.
-    return render_template("solution.html", solved=solved, message=message)
+    return render_template(
+        "solution.html",
+        solved=solved,
+        message=message,
+        time_it_took=int(time_it_took))
 
 
 @app.route("/about")

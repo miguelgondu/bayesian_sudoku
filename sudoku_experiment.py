@@ -3,12 +3,6 @@ This script maintains the SudokuExperiment object,
 an abstraction of the process of serving sudokus and
 optimizing for a particular time using a Gaussian Process
 Regression.
-
-TODO:
-- Implement it as a bandit problem.
-- Implement loading from a json file.
-- Implement click serving.
-- Include the size in the GP.
 """
 import pandas as pd
 import numpy as np
@@ -225,9 +219,10 @@ class SudokuExperiment:
         ])
 
         self.gpr = GaussianProcessRegressor(kernel=self.kernel)
-        print(f"Fitting the GPR with")
-        print(f"X: {X}, Y: {Y}")
-        self.gpr.fit(X, Y)
+        if len(X) > 0:
+            print(f"Fitting the GPR with")
+            print(f"X: {X}, Y: {Y}")
+            self.gpr.fit(X, Y)
 
     def next_sudoku(self):
         """
@@ -283,8 +278,10 @@ class SudokuExperiment:
 
         print("self.prior")
         print(self.prior)
-        prior = np.array([self.prior[int(h)] for h in self.domain]).reshape(-1, 1)
+        prior = np.array([self.prior[h] for h in self.domain]).reshape(-1, 1)
 
+        # Assure the GP has been trained properly:
+        self.fit_gpr()
         mu, sigma = self.gpr.predict(self.domain.reshape(-1, 1), return_std=True)
         mu_gp = mu.copy()
         sigma = sigma.reshape(-1, 1)
@@ -362,7 +359,7 @@ class SudokuExperiment:
         return a_sudoku
 
     def visualize(self, domain=None):
-        if debugging:
+        if self.debugging:
             return
         _, axes = plt.subplots(2, 2, figsize=(10, 10))
 
