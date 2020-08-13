@@ -22,7 +22,7 @@ from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 from scipy.stats import norm
 
-from sudoku_utilities import string_to_sudoku
+from sudoku_utilities import string_to_sudoku, sudoku_to_string
 from sudoku_solver import solve
 
 with open("config.json") as fp:
@@ -117,8 +117,8 @@ class SudokuExperiment:
             "name": self.name,
             "size": self.size,
             "goal": self.goal,
-            "domain": self.domain.tolist(),
-            "prior": self.prior,
+            "domain": self.domain.astype(int).tolist(),
+            "prior": {int(k): float(v) for k, v in self.prior.items()},
             "prior_g": [float(self._g(t)) for t in self.prior.values()],
             "times": [float(t) for t in self.times],
             "log_times": [float(t) for t in self.log_times],
@@ -129,6 +129,8 @@ class SudokuExperiment:
             "next_hints": self.next_hints,
             "next_sudoku_": self.next_sudoku_
         }
+        print("Trying to store this:")
+        print(as_json)
         return as_json
 
     def save(self, filename=None):
@@ -245,9 +247,9 @@ class SudokuExperiment:
         else:
             next_hints = self.acquisition()
 
-        self.next_hints = next_hints
+        self.next_hints = int(next_hints)
         next_sudoku = self.create_sudoku(next_hints)
-        self.next_sudoku_ = next_sudoku
+        self.next_sudoku_ = sudoku_to_string(np.array(next_sudoku))
 
         return next_sudoku
     

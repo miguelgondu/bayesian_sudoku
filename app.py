@@ -52,7 +52,7 @@ def next():
     
     # This operation stores the self.next_sudoku_ and self.next_hints
     next_sudoku = se.next_sudoku()
-    # session["se"] = se.to_json()
+    session["se"] = se.to_json()
 
     print(f"next sudoku: {next_sudoku}")
     return render_template("next.html", sudoku=next_sudoku)
