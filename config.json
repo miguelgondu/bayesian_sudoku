@@ -2,5 +2,6 @@
     "PATH_TO_PRIORS": "./data/priors",
     "PATH_TO_SUDOKUS": "./data/sudokus",
     "PATH_TO_EXPERIMENTS": "./data/experiments/sudoku",
-    "PATH_TO_IMAGES": "./data/images"
+    "PATH_TO_IMAGES": "./data/images",
+    "SECRET_KEY": "temp"
 }

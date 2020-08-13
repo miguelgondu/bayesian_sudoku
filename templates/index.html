@@ -4,14 +4,10 @@
   <h2>Do you want to participate in our experiment?</h2>
   
   <p>
-    Our system will adapt and present you a sudoku that takes close to 3 minutes to solve.
+    Solve these sudokus <strong>as fast as you can</strong>! Our system will adapt and present you a sudoku that takes close to 3 minutes to solve.
   </p>
   
-  <form style="text-align: center;" action="{{ url_for('next') }}" method="POST">
-    <div class="username-container">
-      <input type="text" name="username" autocomplete="off">
-    </div>
-    <br/>
+  <form style="text-align: center;" action="{{ url_for('next') }}">
     <div class="button-container">
       <input type="submit" value="Go!">
     </div>

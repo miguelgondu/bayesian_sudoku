@@ -46,7 +46,7 @@ class SudokuExperiment:
     - Write this docstring.
     - Implement loading from a prior.
     """
-    def __init__(self, size, goal, domain=None, name=None, kappa=0.03, curriculum=[], load_prior=True, debugging=False):
+    def __init__(self, size, goal, domain=None, name=None, curriculum=[], load_prior=True, debugging=False):
         self.timestamp = str(time.time()).replace(".", "")
         self.size = size
         self.goal = goal
@@ -87,7 +87,6 @@ class SudokuExperiment:
         self.kernel = 1*RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
         self.gpr = GaussianProcessRegressor(kernel=self.kernel)
 
-        self.kappa = kappa
         self.curriculum = curriculum
 
         self.next_hints = None
@@ -103,10 +102,17 @@ class SudokuExperiment:
 
         self.debugging = debugging
 
-    def save(self):
+    def to_json(self):
         """
-        Drops everything into a JSON file.
+        Drops everything into a JSON object.
         """
+        if self.real_map is None:
+            real_map = None
+            variance_map = None
+        else:
+            real_map = {k: float(v) for k, v in self.real_map.items()}
+            variance_map = {k: float(v) for k, v in self.variance_map.items()}
+
         as_json = {
             "name": self.name,
             "size": self.size,
@@ -114,16 +120,78 @@ class SudokuExperiment:
             "domain": self.domain.tolist(),
             "prior": self.prior,
             "prior_g": [float(self._g(t)) for t in self.prior.values()],
-            "kappa": self.kappa,
             "times": [float(t) for t in self.times],
             "log_times": [float(t) for t in self.log_times],
             "hints": [int(h) for h in self.hints],
             "sudokus": self.sudokus,
-            "real_map": {k: float(v) for k, v in self.real_map.items()},
-            "variance_map": {k: float(v) for k, v in self.variance_map.items()}
+            "real_map": real_map,
+            "variance_map": variance_map,
+            "next_hints": self.next_hints,
+            "next_sudoku_": self.next_sudoku_
         }
-        with open(f"{PATH_TO_EXPERIMENTS}/{self.timestamp}_sudoku_experiment_{self.name}.json", "w") as fp:
+        return as_json
+
+    def save(self, filename=None):
+        """
+        Drops everything into a JSON object and saves it.
+
+        filename: without ".json" at the end.
+        """
+        as_json = self.to_json()
+
+        if filename is None:
+            filename = f"{self.timestamp}_sudoku_experiment_{self.name}"
+
+        with open(f"{PATH_TO_EXPERIMENTS}/{filename}.json", "w") as fp:
             json.dump(as_json, fp)
+    
+    @classmethod
+    def from_json(cls, json_obj):
+        """
+        Reconstructs the object from a json-like object
+        (assuming it's similar to the one dumped by self.to_json())
+
+        This is not optimized.
+        """
+        print("Reconstructing from:")
+        print(json_obj)
+
+        size = json_obj["size"]
+        goal = json_obj["goal"]
+        name = json_obj["name"]
+        domain = np.array(json_obj["domain"])
+
+        se = cls(size, goal, domain=domain, name=name, load_prior=False)
+
+        se.hints = json_obj["hints"]
+        se.times = json_obj["times"]
+        se.log_times = json_obj["log_times"]
+        se.sudokus = json_obj["sudokus"]
+
+        se.next_hints = json_obj["next_hints"]
+        se.next_sudoku_ = json_obj["next_sudoku_"]
+
+        se.prior = {
+            int(k): float(v) for k, v in json_obj["prior"].items()
+        }
+        real_map = None
+        variance_map = None
+
+        if json_obj["real_map"] is not None:
+            real_map = {
+                int(k): float(v) for k, v in json_obj["real_map"].items()
+            }
+            variance_map = {
+                int(k): float(v) for k, v in json_obj["variance_map"].items()
+            }
+        
+        se.real_map = real_map
+        se.variance_map = variance_map
+
+        print("Reconstructed version:")
+        print(f"{se.to_json()}")
+
+        return se
 
     def _create_sudoku_corpus(self, path):
         """
@@ -211,7 +279,9 @@ class SudokuExperiment:
             # TODO: Think if I should be doing something else here.
             max_so_far = -9999
 
-        prior = np.array([self.prior[h] for h in self.domain]).reshape(-1, 1)
+        print("self.prior")
+        print(self.prior)
+        prior = np.array([self.prior[int(h)] for h in self.domain]).reshape(-1, 1)
 
         mu, sigma = self.gpr.predict(self.domain.reshape(-1, 1), return_std=True)
         mu_gp = mu.copy()
