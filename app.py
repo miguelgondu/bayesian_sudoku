@@ -28,13 +28,11 @@ def root():
     print(f"Got experiment id: {session['experiment_id']}")
 
     print("Creating the Sudoku Experiment object")
-    size = 9
     goal = 2 * 60
     se = SudokuExperiment(
-        size,
         goal,
-        name=f"{exp_id}",
-        debugging=True
+        name=f"{exp_id}"
+        # debugging=True
     )
     print("Storing it in the session")
     session["se"] = se.to_json()
@@ -49,8 +47,8 @@ def next():
     session["start"] = time.time()
     session["final"] = None
     se = SudokuExperiment.from_json(session["se"])
-    
-    # This operation stores the self.next_sudoku_ and self.next_hints
+
+    # This operation stores one hint in self.hints.
     next_sudoku = se.next_sudoku()
     session["se"] = se.to_json()
 
@@ -88,7 +86,7 @@ def solution():
     solved, message = check_solution(board)
 
     if solved:
-        # Fitting the GP
+        # Registering the time
         print("Registering time.")
         se = SudokuExperiment.from_json(session["se"])
         se.register_time(time_it_took)
@@ -98,13 +96,12 @@ def solution():
         se.visualize()
 
         # Saving after fitting the GP
-        session["se"] = se.to_json()
     else:
-        # TODO: remove the last hint, or re-plan how the hints are
-        # being kept.
-        # Implement what happens when the solution wasn't good.
-        # What's that exactly?
-        pass
+        # Ignore that last hint
+        session["se"]["hints"].pop(-1)
+        assert len(session["se"]["hints"]) == len(session["se"]["times"])
+    
+    session["se"] = se.to_json()
 
     # TODO: implement what happens if not solved.
     return render_template(
