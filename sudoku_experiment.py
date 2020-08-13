@@ -44,7 +44,7 @@ class SudokuExperiment:
 
         print("Loading prior.")
         if prior_path is None:
-            prior_path = f"{PATH_TO_PRIORS}/{size}x{size}.csv"
+            prior_path = f"{PATH_TO_PRIORS}/9x9.csv"
         self.prior = np.loadtxt(prior_path)
         
         print("Creating the sudoku corpus.")
@@ -68,9 +68,9 @@ class SudokuExperiment:
         print("Instantiating the GPR.")
         self.kernel = 1*RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
         
-        if len(self.hints > 0):
+        if len(self.hints) > 0 and len(self.times) > 0:
             self.create_and_fit_gpr()
-            self.update_real_and_variance_maps()
+            # self.update_real_and_variance_maps()
 
         self.debugging = debugging
 
@@ -147,9 +147,10 @@ class SudokuExperiment:
         ])
 
         self.gpr = GaussianProcessRegressor(kernel=self.kernel)
-        print(f"Fitting the GPR with")
-        print(f"X: {X}, Y: {Y}")
-        self.gpr.fit(X, Y)
+        if len(X) > 0 and len(Y) > 0:
+            print(f"Fitting the GPR with")
+            print(f"X: {X}, Y: {Y}")
+            self.gpr.fit(X, Y)
 
     def next_sudoku(self):
         """
@@ -230,14 +231,14 @@ class SudokuExperiment:
     #     # Recompute the new mean_real and variance
     #     # using current GP regression.
     #     hints = self.domain.tolist()
-    #     prior_times = np.array([self.prior[h] for h in hints])
+    #     prior = np.array([self.prior[h] for h in hints])
 
     #     mu, sigma = self.gpr.predict(
     #         np.array([hints]).T,
     #         return_std=True
     #     )
 
-    #     real_values = mu + prior_times
+    #     real_values = mu + prior
     #     variance_values = sigma.T
 
     #     # print(f"mu (log): {mu}")
@@ -257,16 +258,16 @@ class SudokuExperiment:
         """
         Could be optimized further.
         """
-
+        self.create_and_fit_gpr()
         hints = self.domain.tolist()
-        prior_times = np.array([self.prior[h] for h in hints])
+        prior = self.prior
 
         mu, sigma = self.gpr.predict(
         np.array([hints]).T,
         return_std=True
         )
 
-        real_map = mu + prior_times
+        real_map = mu + prior
         variance_map = sigma.T
 
         # print(f"mu (log): {mu}")
@@ -276,17 +277,18 @@ class SudokuExperiment:
         return real_map, variance_map
 
     def create_sudoku(self, hints):
-        # Get a sudoku we haven't seen in the past (TODO: optimize)
-        a_sudoku = random.choice([
-            s for s in self.sudoku_corpus if s not in self.sudokus
-        ])
+        # TODO: once we implement a database, we can change this
+        # s.t. we don't serve the same sudoku twice for a player.
+        # Chances are slim, though.
+        
+        a_sudoku = random.choice(self.sudoku_corpus)
         a_sudoku = a_sudoku.copy()
 
         # Assuming the sudoku is solved
-        positions = list(product(range(self.size), repeat=2))
+        positions = list(product(range(9), repeat=2))
         random.shuffle(positions)
 
-        for k in range(self.size ** 2 - hints):
+        for k in range(9 ** 2 - hints):
             i, j = positions[k]
             a_sudoku[i][j] = 0
 
