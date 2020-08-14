@@ -23,11 +23,14 @@ print(domain)
 print(prior)
 
 # Saving it.
-array = np.vstack((domain, prior)).T
-print(array)
+# array = np.vstack((domain, prior)).T
+# print(array)
 
+# We'll save the prior just as a vector
+# assuming we'll always be creating 9x9ers.
+# and that the domain of the GPR is range(17, 81)
 np.savetxt(
     "./data/priors/9x9.csv",
-    array,
-    fmt="%2d,%.5f"
+    prior,
+    fmt="%.5f"
 )

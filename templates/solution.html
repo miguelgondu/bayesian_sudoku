@@ -8,12 +8,11 @@
   {% endif %}
   <p>{{ message }}</p>
 
+  <p>It took you {{ time_it_took }} seconds to solve that sudoku.</p>
+
   <!-- <img src="{{url_to_image}}" alt="Chart"> -->
 
-  <form  style="text-align: center;" action="{{ url_for('next') }}" method="POST">
-    <div class="username-container">
-      <input type="text" name="username", value="{{username}}" readonly>
-    </div>
+  <form  style="text-align: center;" action="{{ url_for('next') }}">
     <input type="submit" value="Next!">
   </form>
 </div>
