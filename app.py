@@ -28,7 +28,7 @@ def root():
     print(f"Got experiment id: {session['experiment_id']}")
 
     print("Creating the Sudoku Experiment object")
-    goal = 2 * 60
+    goal = 30
     se = SudokuExperiment(
         goal,
         name=f"{exp_id}"
@@ -44,9 +44,9 @@ def root():
 
 @app.route("/next")
 def next():
+    se = SudokuExperiment.from_json(session["se"])
     session["start"] = time.time()
     session["final"] = None
-    se = SudokuExperiment.from_json(session["se"])
 
     # This operation stores one hint in self.hints.
     next_sudoku = se.next_sudoku()
@@ -88,6 +88,7 @@ def solution():
     if solved:
         # Registering the time
         print("Registering time.")
+        # Here, it's trying to fit the GP.
         se = SudokuExperiment.from_json(session["se"])
         se.register_time(time_it_took)
 

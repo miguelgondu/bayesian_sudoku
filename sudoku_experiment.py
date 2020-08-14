@@ -68,7 +68,7 @@ class SudokuExperiment:
         print("Instantiating the GPR.")
         self.kernel = 1*RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
         
-        if len(self.hints) > 0 and len(self.times) > 0:
+        if len(self.hints) == len(self.times) and len(self.times) > 0:
             self.create_and_fit_gpr()
             # self.update_real_and_variance_maps()
 
@@ -143,7 +143,7 @@ class SudokuExperiment:
 
         X = np.array([self.hints.copy()]).T
         Y = np.array([
-            log_time - self.prior[hint] for log_time, hint in zip(self.log_times, self.hints)
+            log_time - self.prior[np.where(self.domain == hint)] for log_time, hint in zip(self.log_times, self.hints)
         ])
 
         self.gpr = GaussianProcessRegressor(kernel=self.kernel)
@@ -259,20 +259,15 @@ class SudokuExperiment:
         Could be optimized further.
         """
         self.create_and_fit_gpr()
-        hints = self.domain.tolist()
-        prior = self.prior
 
         mu, sigma = self.gpr.predict(
-        np.array([hints]).T,
-        return_std=True
-        )
+            self.domain.reshape(-1, 1),
+            return_std=True
+            )
+        sigma = sigma.reshape(-1, 1)
 
-        real_map = mu + prior
-        variance_map = sigma.T
-
-        # print(f"mu (log): {mu}")
-        # print(f"real values (log): {real_values}")
-        # print(f"variance: {variance_values}")
+        real_map = mu + self.prior.reshape(-1, 1)
+        variance_map = sigma
 
         return real_map, variance_map
 
@@ -315,10 +310,16 @@ class SudokuExperiment:
             to_plot = self.prior
             sigma = [0 for h in self.domain]
     
-        if self.real_map is not None:
+        if title1 != "prior":
             ax1.plot(self.hints, self.times, "ok", label="Observations")
             ax1.plot(self.domain, np.exp(to_plot), 'b-', label='GP')
-            ax1.fill_between(self.domain, np.exp(to_plot-sigma).squeeze(), np.exp(values+sigma).squeeze(), alpha=0.5)
+            print("np.exp(to_plot-sigma).squeeze()")
+            print(f"{np.exp(to_plot-sigma).squeeze()}")
+            print(f"to_plot")
+            print(f"{to_plot}")
+            print(f"sigma")
+            print(f"{sigma}")
+            ax1.fill_between(self.domain, np.exp(to_plot-sigma).squeeze(), np.exp(to_plot+sigma).squeeze(), alpha=0.5)
         else:
             ax1.plot(self.domain, np.exp(to_plot), 'b-', label='GP')
         
@@ -327,7 +328,6 @@ class SudokuExperiment:
         ax1.set_xlabel("Hints")
         ax1.set_ylabel("Predicted time [sec]")
 
-
         prior = self.prior.reshape(-1, 1)
         # ax2 for acquisition function
         ei, mu, sigma, g_samples = self.expected_improvement(return_mu_and_sigma=True)
@@ -335,7 +335,7 @@ class SudokuExperiment:
         # print(f"mu: {mu}")
         # print(f"sigma: {sigma}")
         # print(f"g_samples: {g_samples.shape}")
-        if self.real_map is not None:
+        if title1 != "prior":
             ax2.plot(self.domain, ei, "rx")
             ax2.set_title("Acq. function (EI).")
             ax2.set_xlabel("Hints")
@@ -353,8 +353,8 @@ class SudokuExperiment:
         plt.tight_layout()
 
         if self.name is None:
-            plt.savefig(f"{PATH_TO_IMAGES}/gp_at_sudoku_{len(self.sudoku)}.jpg")
+            plt.savefig(f"{PATH_TO_IMAGES}/gp_at_sudoku_{len(self.times)}.jpg")
         else:
-            plt.savefig(f"{PATH_TO_IMAGES}/gp_{self.name}_at_sudoku_{len(self.sudokus)}.jpg")
+            plt.savefig(f"{PATH_TO_IMAGES}/gp_{self.name}_at_sudoku_{len(self.times)}.jpg")
 
         plt.close()
