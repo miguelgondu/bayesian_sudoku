@@ -1,5 +1,7 @@
 local_experiments.*
 data/
+data.db
+.vscode/
 .DS_Store
 
 # Python related stuff

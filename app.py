@@ -3,10 +3,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import json
 import time
+import sqlite3
 from flask import Flask, render_template, url_for, request, session
 
+from sudoku_utilities import sudoku_to_string
 from solution_checking import parse_data, check_solution
 from sudoku_experiment import SudokuExperiment
+
+from models import Models
 
 app = Flask(__name__)
 
@@ -52,51 +56,76 @@ def next():
     next_sudoku = se.next_sudoku()
     session["se"] = se.to_json()
 
+    print("Saving in the database.")
+    db = sqlite3.connect("data.db")
+    m = Models(db)
+    m.save_sudoku(
+        session["experiment_id"],
+        np.array(next_sudoku),
+        len(np.where(np.array(next_sudoku) == 0)),
+        session["start"]
+    )
+    db.close()
+
     print(f"next sudoku: {next_sudoku}")
+    print(session)
     return render_template("next.html", sudoku=next_sudoku)
 
 @app.route("/solution", methods=["POST"])
 def solution():
     """
-    This view shows an alert of wether the sudoku 
-    was solved correctly or not. Maybe I should add a
-    button that POSTs to a /next page.
+    TODO: write this
     """
-
-    # TODO: fix this after implementing the database
-    # logic.
-
     # Get the time it took to solve the puzzle
     # I have to do this if people refresh the /solution
     # page. (?)
     if session["final"] is None:
+        # Then the player is accessing this page
+        # for the first time.
+        update = True
         session["final"] = time.time()
-
-    time_it_took = session["final"] - session["start"]
-    print(f"it took {time_it_took}")
-    
-    # Should I reset start?
-    # No. Start should get reset when the player
-    # starts a new sudoku.
-    # session["start"] = None
+        time_it_took = session["final"] - session["start"]
+        print(f"it took {time_it_took}")
+    else:
+        print("Did you just reload the page?")
+        update = False
+        session["final"] = min(
+            (time.time(), session["final"])
+        )
+        time_it_took = session["final"] - session["start"]
+        print(f"it took {time_it_took}")
 
     # Get the board from the request
     data = request.form
     board = np.array(parse_data(data))
     solved, message = check_solution(board)
 
+    # Save this whole thing into the db.
+    if update:
+        print("Saving in the database.")
+        db = sqlite3.connect("data.db")
+        m = Models(db)
+        m.save_solution(
+            session["experiment_id"],
+            board,
+            session["final"],
+            solved
+        )
+        db.close()
+
+    se = SudokuExperiment.from_json(session["se"])
     if solved:
-        # Registering the time
-        print("Registering time.")
-        # Here, it's trying to fit the GP.
-        se = SudokuExperiment.from_json(session["se"])
-        se.register_time(time_it_took)
+        if update:
+            # Registering the time
+            print("Registering time.")
+            # Here, it's trying to fit the GP.
+            se.register_time(time_it_took)
 
-        # Plotting the mean of the GP and the acquisition for debugging
-        print("Visualizing.")
-        se.visualize()
-
-        # Saving after fitting the GP
+            # Plotting the mean of the GP and the acquisition for debugging
+            # print("Visualizing.")
+            # se.visualize()
+        else:
+            print("We're not updating. Did you just reload the page?")
     else:
         # Ignore that last hint
         session["se"]["hints"].pop(-1)

@@ -29,11 +29,19 @@ PATH_TO_IMAGES = config["PATH_TO_IMAGES"]
 
 class SudokuExperiment:
     """
-    This class maintains every Sudoku Experiment.
+    SudokuExperiment maintains the objective time at goal, and keeps
+    track of the sudokus that have been played (according to an encoding)
+    and the time it took for the player to solve them. It uses this information
+    to train and maintain a Gaussian Process Regression, which is then used
+    for Bayesian Optimization.
 
-    TODO:
-    - Write this docstring.
-    - Implement loading from a prior.
+    Bayesian Optimization relies on a probabilistic model (GPR in our case) and
+    an acquisition function. Since we're not trying to optimize time (i.e. we're
+    not trying to find the max time, making sudokus more and more difficult),
+    we "bend" the predicted time with g(t) = -(t - goal)**2. This function is now
+    optimized at {goal}.
+
+    Another detail: we model log(time) instead of time to avoid negative times.
     """
     def __init__(self, goal, hints=[], times=[], name="adaptive", curriculum=[], prior_path=None, debugging=False):
         self.goal = goal
@@ -70,7 +78,6 @@ class SudokuExperiment:
         
         if len(self.hints) == len(self.times) and len(self.times) > 0:
             self.create_and_fit_gpr()
-            # self.update_real_and_variance_maps()
 
         self.debugging = debugging
 
@@ -160,6 +167,11 @@ class SudokuExperiment:
         """
         if len(self.curriculum) > 0:
             next_hints = self.curriculum.pop(0)
+        elif len(self.hints) == len(self.times) + 1:
+            # We're still testing certain hint,
+            # we haven't recorded time for it
+            # (e.g. refreshing the /next page).
+            next_hints = self.hints[-1]
         else:
             next_hints = self.acquisition()
 
