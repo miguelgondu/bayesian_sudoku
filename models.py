@@ -29,6 +29,9 @@ class Models:
         self.execute_query(query)
 
     def create_sudokus_table(self):
+        """
+        Add counter?
+        """
         query = "CREATE TABLE IF NOT EXISTS sudokus ("
         query += "exp_id INT,"
         query += "sudoku TEXT,"
@@ -38,6 +41,9 @@ class Models:
         self.execute_query(query)
 
     def create_solutions_table(self):
+        """
+        TODO: add reason if not solved.
+        """
         query = "CREATE TABLE IF NOT EXISTS solutions ("
         query += "exp_id INT,"
         query += "sudoku_solved TEXT,"

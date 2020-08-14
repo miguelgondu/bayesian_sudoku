@@ -32,7 +32,7 @@ def root():
     print(f"Got experiment id: {session['experiment_id']}")
 
     print("Creating the Sudoku Experiment object")
-    goal = 30
+    goal = 60 * 3
     se = SudokuExperiment(
         goal,
         name=f"{exp_id}"
@@ -133,8 +133,8 @@ def solution():
             se.register_time(time_it_took)
 
             # Plotting the mean of the GP and the acquisition for debugging
-            # print("Visualizing.")
-            # se.visualize()
+            print("Visualizing.")
+            se.visualize()
         else:
             print("We're not updating. Did you just reload the page?")
     else:
