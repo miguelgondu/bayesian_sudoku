@@ -59,10 +59,21 @@ def next():
     print("Saving in the database.")
     db = sqlite3.connect("data.db")
     m = Models(db)
+    # Check if this experiment has been saved in
+    # the experiments table.
+    if not m.is_this_experiment_in(session["experiment_id"]):
+        m.save_experiment(
+            session["experiment_id"],
+            session["se"]["goal"]
+        )
+    print(np.array(next_sudoku))
+    print(np.where(np.array(next_sudoku) == 0)[0])
+    print(f"Empty spots: {len(np.where(np.array(next_sudoku) == 0)[0])}")
+
     m.save_sudoku(
         session["experiment_id"],
         np.array(next_sudoku),
-        len(np.where(np.array(next_sudoku) == 0)),
+        81 - len(np.where(np.array(next_sudoku) == 0)[0]),
         session["start"]
     )
     db.close()

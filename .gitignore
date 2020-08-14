@@ -3,6 +3,7 @@ data/
 data.db
 .vscode/
 .DS_Store
+summarize.py
 
 # Python related stuff
 # Byte-compiled / optimized / DLL files
