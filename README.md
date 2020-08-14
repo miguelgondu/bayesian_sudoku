@@ -23,17 +23,25 @@ Then, create a virtual environment (if you want) and install the requirements wi
 pip install -r requirements.txt
 ```
 
+Start by creating the database:
+
+```
+python models.py
+```
+
 and then you should be ready to run
 
 ```
 python app.py
 ```
 
-and load the webpage that's being served. Put your username in that brown box and click start!
+and load the webpage that's being served. That should work!
 
 ## After running the sudoku web app
 
-After running some iterations, you can find visualizations of the time-curve getting updated in `./data/images`. You can also find a summary of the experiment (more precisely, a JSON representation of the `SudokuExperiment` class in `sudoku_experiment.py`) in `./data/experiments/sudoku`.
+After running some iterations, you can find visualizations of the time-curve getting updated in `./data/images`.
+
+TODO: add some details about the database.
 
 ## Some details
 
