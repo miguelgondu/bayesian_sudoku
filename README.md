@@ -4,20 +4,7 @@ This repo contains the code for the first experiment of the paper we plan to wri
 
 ## Running the sudoku web app
 
-Unzip `data.zip` in this directory. After that, it should look like this:
-
-```
-├── data
-│   ├── experiments
-│   │   └── sudoku
-│   ├── images
-│   ├── priors
-│   │   └── 9x9.csv
-│   └── sudokus
-│       └── sudoku.json
-```
-
-Then, create a virtual environment (if you want) and install the requirements with
+Create a virtual environment (if you want) and install the requirements with
 
 ```
 pip install -r requirements.txt

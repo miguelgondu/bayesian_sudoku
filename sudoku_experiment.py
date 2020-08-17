@@ -19,13 +19,20 @@ from scipy.stats import norm
 from sudoku_utilities import string_to_sudoku, sudoku_to_string
 from sudoku_solver import solve
 
+from pathlib import Path
+
+
+
 with open("config.json") as fp:
     config = json.load(fp)
 
-PATH_TO_PRIORS = config["PATH_TO_PRIORS"]
-PATH_TO_SUDOKUS = config["PATH_TO_SUDOKUS"]
+PATH_TO_SUDOKUS = '.'
 PATH_TO_EXPERIMENTS = config["PATH_TO_EXPERIMENTS"]
 PATH_TO_IMAGES = config["PATH_TO_IMAGES"]
+
+Path(PATH_TO_EXPERIMENTS).mkdir(parents=True, exist_ok=True)
+Path(PATH_TO_IMAGES).mkdir(parents=True, exist_ok=True)
+
 
 class SudokuExperiment:
     """
@@ -43,18 +50,16 @@ class SudokuExperiment:
 
     Another detail: we model log(time) instead of time to avoid negative times.
     """
-    def __init__(self, goal, hints=[], times=[], name="adaptive", curriculum=[], prior_path=None, debugging=False):
+
+    def __init__(self, goal, hints=[], times=[], name="adaptive", curriculum=[], debugging=False):
         self.goal = goal
         self.name = name
-        
+
         # From now on, we'll assume that sudokus are 9x9.
         self.domain = np.arange(17, 81)
 
-        print("Loading prior.")
-        if prior_path is None:
-            prior_path = f"{PATH_TO_PRIORS}/9x9.csv"
-        self.prior = np.loadtxt(prior_path)
-        
+        self.prior = np.array([self.prior_fn(h) for h in self.domain])
+
         print("Creating the sudoku corpus.")
         self.sudoku_corpus = self._create_sudoku_corpus()
 
@@ -64,7 +69,7 @@ class SudokuExperiment:
         self.hints = hints
         self.times = times
         self.log_times = [np.log(t) for t in self.times]
-    
+
         # Since EI is stochastic, we need to maintain this
         # for the communication between sites:
 
@@ -74,12 +79,15 @@ class SudokuExperiment:
         # self.variance_map = None
 
         print("Instantiating the GPR.")
-        self.kernel = 1*RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
-        
+        self.kernel = 1 * RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
+
         if len(self.hints) == len(self.times) and len(self.times) > 0:
             self.create_and_fit_gpr()
 
         self.debugging = debugging
+
+    def prior_fn(self, hint):
+        return np.log(600 + ((600 - 3) / (17 - 80)) * (hint - 17))
 
     def to_json(self):
         """
@@ -140,7 +148,7 @@ class SudokuExperiment:
         ]
 
         return corpus
-    
+
     def create_and_fit_gpr(self):
         """
         Fits a Gaussian Process on log(t(x)) - prior(x),
@@ -220,7 +228,7 @@ class SudokuExperiment:
 
         g_samples = self._g(mu + sigma * np.random.randn(mu.shape[0], n_samples))
         ei = np.mean(np.maximum(0, g_samples - max_so_far), axis=1)
-        
+
         if return_mu_and_sigma:
             return (ei, mu_gp, sigma, g_samples)
         else:
@@ -262,7 +270,7 @@ class SudokuExperiment:
     #     for i, hint in enumerate(hints):
     #         real_map[hint] = real_values[i]
     #         variance_map[hint] = variance_values[i]
-        
+
     #     self.real_map = real_map
     #     self.variance_map = variance_map
 
@@ -275,7 +283,7 @@ class SudokuExperiment:
         mu, sigma = self.gpr.predict(
             self.domain.reshape(-1, 1),
             return_std=True
-            )
+        )
         sigma = sigma.reshape(-1, 1)
 
         real_map = mu + self.prior.reshape(-1, 1)
@@ -287,7 +295,7 @@ class SudokuExperiment:
         # TODO: once we implement a database, we can change this
         # s.t. we don't serve the same sudoku twice for a player.
         # Chances are slim, though.
-        
+
         a_sudoku = random.choice(self.sudoku_corpus)
         a_sudoku = a_sudoku.copy()
 
@@ -321,20 +329,20 @@ class SudokuExperiment:
             title1 = "prior"
             to_plot = self.prior
             sigma = [0 for h in self.domain]
-    
+
         if title1 != "prior":
             ax1.plot(self.hints, self.times, "ok", label="Observations")
             ax1.plot(self.domain, np.exp(to_plot), 'b-', label='GP')
             print("np.exp(to_plot-sigma).squeeze()")
-            print(f"{np.exp(to_plot-sigma).squeeze()}")
+            print(f"{np.exp(to_plot - sigma).squeeze()}")
             print(f"to_plot")
             print(f"{to_plot}")
             print(f"sigma")
             print(f"{sigma}")
-            ax1.fill_between(self.domain, np.exp(to_plot-sigma).squeeze(), np.exp(to_plot+sigma).squeeze(), alpha=0.5)
+            ax1.fill_between(self.domain, np.exp(to_plot - sigma).squeeze(), np.exp(to_plot + sigma).squeeze(), alpha=0.5)
         else:
             ax1.plot(self.domain, np.exp(to_plot), 'b-', label='GP')
-        
+
         ax1.axhline(y=self.goal)
         ax1.set_title(title1)
         ax1.set_xlabel("Hints")
