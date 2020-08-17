@@ -27,21 +27,18 @@ app.secret_key = secret_key
 
 @app.route("/")
 def root():
-    exp_id = str(time.time()).replace(".", "")
-    session["experiment_id"] = exp_id
-    print(f"Got experiment id: {session['experiment_id']}")
+    # Assign a random id to the player.
+    if "user_id" not in session:
+        session["user_id"] = str(time.time()).replace(".", "")
 
-    print("Creating the Sudoku Experiment object")
-    goal = 60 * 3
+    goal = 30
+    session["goal"] = goal
     se = SudokuExperiment(
         goal,
-        name=f"{exp_id}"
+        name=f"{session['user_id']}"
         # debugging=True
     )
-    print("Storing it in the session")
     session["se"] = se.to_json()
-
-    print(session["se"])
     session["start"] = None
 
     return render_template("index.html")
@@ -55,31 +52,8 @@ def next():
     # This operation stores one hint in self.hints.
     next_sudoku = se.next_sudoku()
     session["se"] = se.to_json()
-
-    print("Saving in the database.")
-    db = sqlite3.connect("data.db")
-    m = Models(db)
-    # Check if this experiment has been saved in
-    # the experiments table.
-    if not m.is_this_experiment_in(session["experiment_id"]):
-        m.save_experiment(
-            session["experiment_id"],
-            session["se"]["goal"]
-        )
-    print(np.array(next_sudoku))
-    print(np.where(np.array(next_sudoku) == 0)[0])
-    print(f"Empty spots: {len(np.where(np.array(next_sudoku) == 0)[0])}")
-
-    m.save_sudoku(
-        session["experiment_id"],
-        np.array(next_sudoku),
-        81 - len(np.where(np.array(next_sudoku) == 0)[0]),
-        session["start"]
-    )
-    db.close()
-
+    session["next_sudoku"] = next_sudoku
     print(f"next sudoku: {next_sudoku}")
-    print(session)
     return render_template("next.html", sudoku=next_sudoku)
 
 @app.route("/solution", methods=["POST"])
@@ -112,17 +86,16 @@ def solution():
     solved, message = check_solution(board)
 
     # Save this whole thing into the db.
-    if update:
-        print("Saving in the database.")
-        db = sqlite3.connect("data.db")
-        m = Models(db)
-        m.save_solution(
-            session["experiment_id"],
-            board,
-            session["final"],
-            solved
-        )
-        db.close()
+    print("Saving in the database.")
+    db = sqlite3.connect(config["DATABASE"])
+    m = Models(db)
+    m.save_trial(
+        session["user_id"],
+        sudoku_to_string(session["next_sudoku"]),
+        solved,
+        time_it_took
+    )
+    db.close()
 
     se = SudokuExperiment.from_json(session["se"])
     if solved:

@@ -1,6 +1,9 @@
+import numpy as np
 from math import sqrt, ceil, floor
 
 def sudoku_to_string(sudoku):
+    if not isinstance(sudoku, np.ndarray):
+        sudoku = np.array(sudoku)
     sudoku = sudoku.astype(str).flatten().tolist()
     str_sudoku = "".join(sudoku)
     return str_sudoku

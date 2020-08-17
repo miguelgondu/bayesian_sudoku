@@ -1,6 +1,6 @@
 local_experiments.*
 data/
-data.db
+database.db
 .vscode/
 .DS_Store
 summarize.py
