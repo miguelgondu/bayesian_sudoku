@@ -4,24 +4,17 @@ an abstraction of the process of serving sudokus and
 optimizing for a particular time using a Gaussian Process
 Regression.
 """
-import pandas as pd
-import numpy as np
 import json
-import matplotlib.pyplot as plt
 import random
-import time
 from itertools import product
-
-from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, WhiteKernel
-from scipy.stats import norm
-
-from sudoku_utilities import string_to_sudoku, sudoku_to_string
-from sudoku_solver import solve
-
 from pathlib import Path
 
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.gaussian_process import GaussianProcessRegressor
+from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
+from sudoku_utilities import string_to_sudoku
 
 with open("config.json") as fp:
     config = json.load(fp)
@@ -80,59 +73,15 @@ class SudokuExperiment:
 
         print("Instantiating the GPR.")
         self.kernel = 1 * RBF(length_scale=1) + WhiteKernel(noise_level=np.log(2))
+        self.gpr = GaussianProcessRegressor(kernel=self.kernel)
 
         if len(self.hints) == len(self.times) and len(self.times) > 0:
-            self.create_and_fit_gpr()
+            self._fit_gpr()
 
         self.debugging = debugging
 
     def prior_fn(self, hint):
         return np.log(600 + ((600 - 3) / (17 - 80)) * (hint - 17))
-
-    def to_json(self):
-        """
-        Drops everything into a JSON object.
-        """
-        as_json = {
-            "name": self.name,
-            "goal": self.goal,
-            "hints": [int(h) for h in self.hints],
-            "times": [float(t) for t in self.times]
-        }
-        print("Trying to store this:")
-        print(as_json)
-        return as_json
-
-    def save(self, filename=None):
-        """
-        Drops everything into a JSON object and saves it.
-
-        filename: without ".json" at the end.
-        """
-        as_json = self.to_json()
-
-        if filename is None:
-            filename = f"{self.name}_sudoku_experiment"
-
-        with open(f"{PATH_TO_EXPERIMENTS}/{filename}.json", "w") as fp:
-            json.dump(as_json, fp)
-
-    @classmethod
-    def from_json(cls, json_obj):
-        """
-        Reconstructs the object from a json-like object
-        (assuming it's similar to the one dumped by self.to_json())
-        """
-        print("Reconstructing from:")
-        print(json_obj)
-
-        goal = json_obj["goal"]
-        name = json_obj["name"]
-        hints = json_obj["hints"]
-        times = json_obj["times"]
-
-        se = cls(goal, hints=hints, times=times, name=name)
-        return se
 
     def _create_sudoku_corpus(self):
         # Load the 2000 sudokus
@@ -149,7 +98,7 @@ class SudokuExperiment:
 
         return corpus
 
-    def create_and_fit_gpr(self):
+    def _fit_gpr(self):
         """
         Fits a Gaussian Process on log(t(x)) - prior(x),
         where x is the amount of digits we're giving
@@ -161,7 +110,6 @@ class SudokuExperiment:
             log_time - self.prior[np.where(self.domain == hint)] for log_time, hint in zip(self.log_times, self.hints)
         ])
 
-        self.gpr = GaussianProcessRegressor(kernel=self.kernel)
         if len(X) > 0 and len(Y) > 0:
             print(f"Fitting the GPR with")
             print(f"X: {X}, Y: {Y}")
@@ -219,8 +167,6 @@ class SudokuExperiment:
 
         prior = self.prior.reshape(-1, 1)
 
-        # Assure the GP has been trained properly:
-        self.create_and_fit_gpr()
         mu, sigma = self.gpr.predict(self.domain.reshape(-1, 1), return_std=True)
         mu_gp = mu.copy()
         sigma = sigma.reshape(-1, 1)
@@ -237,48 +183,10 @@ class SudokuExperiment:
     def _g(self, t):
         return - (np.exp(t) - self.goal) ** 2
 
-    def register_time(self, time_it_took):
-        """
-        This function registers time in self.time (and log
-        time accordingly). It should only be called if the
-        sudoku was properly solved.
-        """
-        print(f"Registering time {time_it_took} for {self.hints[-1]} hints.")
-        self.times.append(time_it_took)
-        self.log_times.append(np.log(time_it_took))
-
-    # def update_real_and_variance_maps(self):
-    #     # Recompute the new mean_real and variance
-    #     # using current GP regression.
-    #     hints = self.domain.tolist()
-    #     prior = np.array([self.prior[h] for h in hints])
-
-    #     mu, sigma = self.gpr.predict(
-    #         np.array([hints]).T,
-    #         return_std=True
-    #     )
-
-    #     real_values = mu + prior
-    #     variance_values = sigma.T
-
-    #     # print(f"mu (log): {mu}")
-    #     # print(f"real values (log): {real_values}")
-    #     # print(f"variance: {variance_values}")
-
-    #     real_map = {}
-    #     variance_map = {}
-    #     for i, hint in enumerate(hints):
-    #         real_map[hint] = real_values[i]
-    #         variance_map[hint] = variance_values[i]
-
-    #     self.real_map = real_map
-    #     self.variance_map = variance_map
-
     def compute_real_and_variance_maps(self):
         """
         Could be optimized further.
         """
-        self.create_and_fit_gpr()
 
         mu, sigma = self.gpr.predict(
             self.domain.reshape(-1, 1),
