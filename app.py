@@ -78,7 +78,7 @@ def solution():
 
     # Save this whole thing into the db.
     print("Saving in the database.")
-    db = psycopg2.connect("postgres://haqgglgbldkzch:a430a4e8455cd241225a454cfb40a4745a16c790aad049ee6c1e5088ee364be5@ec2-54-158-122-162.compute-1.amazonaws.com:5432/dcujjocm5f1qj3")
+    db = psycopg2.connect(db_url)
     trials = Trials(db)
     trials.save_trial(
         session["user_id"],
