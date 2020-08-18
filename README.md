@@ -10,13 +10,7 @@ Create a virtual environment (if you want) and install the requirements with
 pip install -r requirements.txt
 ```
 
-Start by creating the database:
-
-```
-python models.py
-```
-
-and then you should be ready to run
+Run
 
 ```
 python app.py
@@ -29,23 +23,3 @@ and load the webpage that's being served. That should work!
 After running some iterations, you can find visualizations of the time-curve getting updated in `./data/images`.
 
 TODO: add some details about the database.
-
-## Some details
-
-### Modifying the config file
-
-The web app depends on a prior (that can be constructed using `create_priors.py`) and on some sudokus that were downloaded from [Kaggle's databases](https://www.kaggle.com/bryanpark/sudoku). This files are loaded from the app from the paths established in a config file (which is in this repo), so feel free to change them in your case.
-
-In my case, I created a data folder in this repo with the following structure:
-
-```
-.
-├── data
-│   ├── experiments
-│   │   └── sudoku
-│   ├── images
-│   ├── priors
-│   ├── sudokus
-│   │   ├── sudokus_9x9.csv
-│   └── updates
-```
