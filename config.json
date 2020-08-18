@@ -3,5 +3,5 @@
     "PATH_TO_EXPERIMENTS": "./data/experiments/sudoku",
     "PATH_TO_IMAGES": "./data/images",
     "SECRET_KEY": "temp",
-    "DATABASE": "database.db"
+    "DATABASE": "postgres://haqgglgbldkzch:a430a4e8455cd241225a454cfb40a4745a16c790aad049ee6c1e5088ee364be5@ec2-54-158-122-162.compute-1.amazonaws.com:5432/dcujjocm5f1qj3"
 }

@@ -1,5 +1,5 @@
 import json
-import sqlite3
+import psycopg2
 import time
 import uuid
 
@@ -17,16 +17,15 @@ app = Flask(__name__)
 # Squelch a warning
 plt.switch_backend('Agg')
 
-# This will need to get changed to os.environ
+# These will need to get changed to os.environ
 # when deploying with Heroku.
 with open("config.json") as fp:
     config = json.load(fp)
-
 secret_key = config["SECRET_KEY"]
 app.secret_key = secret_key
+db_url = config["DATABASE"]
 
-db_fname = config["DATABASE"]
-db = sqlite3.connect(db_fname)
+db = psycopg2.connect(db_url)
 trials = Trials(db)
 trials.create_trials_table()
 db.close()
@@ -45,7 +44,7 @@ def root():
 def next():
     goal = 30
 
-    db = sqlite3.connect(db_fname)
+    db = psycopg2.connect(db_url)
     trials = Trials(db)
     solved = trials.get_solved_for_user(session["user_id"])
     hints = [81 - sudoku.count('0') for (_, _, sudoku, _, _) in solved]
@@ -79,7 +78,7 @@ def solution():
 
     # Save this whole thing into the db.
     print("Saving in the database.")
-    db = sqlite3.connect(db_fname)
+    db = psycopg2.connect("postgres://haqgglgbldkzch:a430a4e8455cd241225a454cfb40a4745a16c790aad049ee6c1e5088ee364be5@ec2-54-158-122-162.compute-1.amazonaws.com:5432/dcujjocm5f1qj3")
     trials = Trials(db)
     trials.save_trial(
         session["user_id"],

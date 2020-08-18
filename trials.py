@@ -7,6 +7,7 @@ class Trials:
         """
         Takes a db connection.
         """
+        self.table_name = "trialsdebug"
         self.db = db
 
     def execute_query(self, query):
@@ -15,23 +16,23 @@ class Trials:
         self.db.commit()
 
     def create_trials_table(self):
-        query = "CREATE TABLE IF NOT EXISTS trials ("
-        query += "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        query = f"CREATE TABLE IF NOT EXISTS {self.table_name} ("
+        query += "id SERIAL PRIMARY KEY,"
         query += "user_id VARCHAR(36),"
-        query += "sudoku TEXT,"
-        query += "solved BIT,"
+        query += "sudoku VARCHAR(81),"
+        query += "solved BOOLEAN,"
         query += "took FLOAT"
         query += ")"
         self.execute_query(query)
 
     def get_solved_for_user(self, user_id):
-        query = f"SELECT * FROM trials WHERE user_id='{user_id}' AND solved=1"
+        query = f"SELECT * FROM {self.table_name} WHERE user_id='{user_id}' AND solved=TRUE"
         c = self.db.cursor()
         c.execute(query)
         trials = c.fetchall()
         return trials
 
     def save_trial(self, user_id, sudoku, solved, took):
-        query = f"INSERT INTO trials (user_id,sudoku,solved,took) VALUES ('{user_id}', '{sudoku}', {1 if solved else 0}, {took});"
+        query = f"INSERT INTO {self.table_name} (user_id,sudoku,solved,took) VALUES ('{user_id}', '{sudoku}', {'TRUE' if solved else 'FALSE'}, {took});"
         print(query)
         self.execute_query(query)
