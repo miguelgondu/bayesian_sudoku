@@ -1,3 +1,4 @@
+import os
 import json
 import psycopg2
 import time
@@ -6,6 +7,8 @@ import uuid
 import matplotlib.pyplot as plt
 import numpy as np
 from flask import Flask, render_template, request, session
+
+from dotenv import load_dotenv
 
 from trials import Trials
 from solution_checking import parse_data, check_solution
@@ -17,13 +20,10 @@ app = Flask(__name__)
 # Squelch a warning
 plt.switch_backend('Agg')
 
-# These will need to get changed to os.environ
-# when deploying with Heroku.
-with open("config.json") as fp:
-    config = json.load(fp)
-secret_key = config["SECRET_KEY"]
-app.secret_key = secret_key
-db_url = config["DATABASE"]
+# Load variables
+load_dotenv()
+app.secret_key = os.environ["SECRET_KEY"]
+db_url = os.environ["DATABASE_URL"]
 
 db = psycopg2.connect(db_url)
 trials = Trials(db)

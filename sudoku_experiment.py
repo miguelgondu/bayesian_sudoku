@@ -6,6 +6,7 @@ Regression.
 """
 import json
 import random
+import os
 from itertools import product
 from pathlib import Path
 
@@ -16,15 +17,11 @@ from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
 from sudoku_utilities import string_to_sudoku
 
-with open("config.json") as fp:
-    config = json.load(fp)
+from dotenv import load_dotenv
 
+load_dotenv()
 PATH_TO_SUDOKUS = '.'
-PATH_TO_EXPERIMENTS = config["PATH_TO_EXPERIMENTS"]
-PATH_TO_IMAGES = config["PATH_TO_IMAGES"]
-
-Path(PATH_TO_EXPERIMENTS).mkdir(parents=True, exist_ok=True)
-Path(PATH_TO_IMAGES).mkdir(parents=True, exist_ok=True)
+PATH_TO_IMAGES = os.environ["PATH_TO_IMAGES"]
 
 
 class SudokuExperiment:
