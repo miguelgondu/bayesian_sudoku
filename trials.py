@@ -7,7 +7,7 @@ class Trials:
         """
         Takes a db connection.
         """
-        self.table_name = "trials"
+        self.table_name = "trialsinfo"
         self.db = db
 
     def execute_query(self, query):
