@@ -1,17 +1,5 @@
-alembic==1.4.2
-appnope==0.1.0
-backcall==0.2.0
-certifi==2020.6.20
-click==7.1.2
-cycler==0.10.0
-decorator==4.4.2
 Flask==1.1.2
-Flask-Migrate==2.5.3
-Flask-Script==2.0.6
-Flask-SQLAlchemy==2.4.4
 gunicorn==20.0.4
-ipython==7.17.0
-ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.17.2
 Jinja2==2.11.2
