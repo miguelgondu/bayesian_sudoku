@@ -21,6 +21,10 @@ p {
   margin-right: 5%;
 }
 
+strong {
+  font-weight: 900;
+}
+
 .container {
   position : relative;
 

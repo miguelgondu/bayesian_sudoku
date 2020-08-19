@@ -17,11 +17,7 @@ from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
 from sudoku_utilities import string_to_sudoku
 
-from dotenv import load_dotenv
-
-load_dotenv()
 PATH_TO_SUDOKUS = '.'
-
 
 class SudokuExperiment:
     """

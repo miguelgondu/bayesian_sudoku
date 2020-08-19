@@ -8,12 +8,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 from flask import Flask, render_template, request, session
 
-from dotenv import load_dotenv
-
 from trials import Trials
 from solution_checking import parse_data, check_solution
 from sudoku_experiment import SudokuExperiment
 from sudoku_utilities import sudoku_to_string
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ModuleNotFoundError:
+    print("Couldn't load the local .env file.")
 
 app = Flask(__name__)
 
@@ -21,7 +25,6 @@ app = Flask(__name__)
 plt.switch_backend('Agg')
 
 # Load variables
-load_dotenv()
 app.secret_key = os.environ["SECRET_KEY"]
 db_url = os.environ["DATABASE_URL"]
 
@@ -55,7 +58,6 @@ def next():
         times=times,
         name=f"{session['user_id']}"
     )
-    se.visualize()  # TODO this takes several seconds. Consider if we should do it offline.
 
     next_sudoku = se.next_sudoku()
     session["start"] = time.time()
@@ -100,4 +102,4 @@ def about():
 
 if __name__ == "__main__":
     print("Serving the web app")
-    app.run(debug=True)
+    app.run()
