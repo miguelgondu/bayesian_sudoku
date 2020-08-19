@@ -21,7 +21,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 PATH_TO_SUDOKUS = '.'
-PATH_TO_IMAGES = os.environ["PATH_TO_IMAGES"]
 
 
 class SudokuExperiment:
@@ -278,8 +277,8 @@ class SudokuExperiment:
         plt.tight_layout()
 
         if self.name is None:
-            plt.savefig(f"{PATH_TO_IMAGES}/gp_at_sudoku_{len(self.times)}.jpg")
+            plt.savefig(f"gp_at_sudoku_{len(self.times)}.jpg")
         else:
-            plt.savefig(f"{PATH_TO_IMAGES}/gp_{self.name}_at_sudoku_{len(self.times)}.jpg")
+            plt.savefig(f"gp_{self.name}_at_sudoku_{len(self.times)}.jpg")
 
         plt.close()

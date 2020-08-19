@@ -42,8 +42,7 @@ def root():
 
 @app.route("/next")
 def next():
-    goal = 30
-
+    goal = 3 * 60
     db = psycopg2.connect(db_url)
     trials = Trials(db)
     solved = trials.get_solved_for_user(session["user_id"])
