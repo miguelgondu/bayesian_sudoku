@@ -1,7 +1,0 @@
-{
-    "PATH_TO_SUDOKUS": ".",
-    "PATH_TO_EXPERIMENTS": "./data/experiments/sudoku",
-    "PATH_TO_IMAGES": "./data/images",
-    "SECRET_KEY": "temp",
-    "DATABASE": "database.db"
-}
