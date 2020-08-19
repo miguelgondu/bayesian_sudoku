@@ -1,3 +1,5 @@
+import psycopg2
+
 class Trials:
     """
     The trials table
@@ -23,7 +25,11 @@ class Trials:
         query += "solved BOOLEAN,"
         query += "took FLOAT"
         query += ")"
-        self.execute_query(query)
+        try:
+            self.execute_query(query)
+        except psycopg2.errors.UniqueViolation:
+            print("Table already exists?")
+            pass
 
     def get_solved_for_user(self, user_id):
         query = f"SELECT * FROM {self.table_name} WHERE user_id='{user_id}' AND solved=TRUE"
