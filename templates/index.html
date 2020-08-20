@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
   <h1 style="text-align: center;">Adaptive Sudoku</h1>
-  <h2>Do you want to participate in our experiment?</h2>
+  <h2>Play Sodoku, for science!</h2>
   
   <p>
     Solve these sudokus <strong>as fast as you can</strong>!
     <br />
-    Our system will adapt and present you a sudoku that takes close to 3 minutes to solve.
+    Our system can adapt and aims to present you with a sudoku that takes around 3 minutes to solve.
   </p>
   
   <form style="text-align: center;" action="{{ url_for('next') }}">
