@@ -1,12 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<form style="padding-top: 5%;" action="{{ url_for('solution') }}" method="post" name="sudoku-input" autocomplete="off">
+<p>Fill in the missing digits and send the solution.</p>
+<form action="{{ url_for('solution') }}" method="post" name="sudoku-input" autocomplete="off">
   {% for i in range(sudoku | length) %}
     <div class="grid-row">
       {% for j in range(sudoku[0] | length) %}
         {% if sudoku[i][j] == 0 %}
         <div class="grid-cell">
-          <input type="text" maxlength="1" name='solved_sudoku[{{i}}][{{j}}]' class="def-txt-input">
+          <input type="text" maxlength="1" name='solved_sudoku[{{i}}][{{j}}]' class="def-txt-input" pattern="\d*">
         </div>
         {% else %}
         <div class="grid-cell-prefilled">

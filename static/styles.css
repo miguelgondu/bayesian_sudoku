@@ -1,24 +1,38 @@
 
+:root {
+   --background-color: #181d2e;
+   --text-color: #131515;
+   --content-color: #C8D3D5;
+   --interaction-color: #DD1155;
+   --text-color-alt: white;
+   --cell: #5F758E;
+   /* --cell: #DFF3E3; */
+   --cell-prefilled: #383961;
+}
+
 html, body {
-  height     : 100%;
+  /* height     : 100%; */
   margin     : 0;
   padding    : 0;
   font-family: "Open Sans";
+  color: var(--text-color);
+  background : var(--background-color);
+}
 
-  background : #353531;
+form {
+  padding-top: 3%;
 }
 
 body {
-  margin-top : 40px;
+  /* padding-top: 40px; */
+  /* margin-top : 40px; */
   /*margin-bottom : 71px;*/
 }
 
 p {
   font-size: 25px;
   text-align: center;
-  margin: 3%;
-  margin-left: 5%;
-  margin-right: 5%;
+  margin: 1% 5%;
 }
 
 strong {
@@ -40,10 +54,12 @@ strong {
 }
 
 h1 {
-  margin      : 5%;
-  font-size   : 40px;
+  /* margin      : 15% 5% 5%; */
+  margin: 5%;
+  font-size   : 60px;
   font-weight : bold;
   text-align  : center;
+  color: var(--cell-prefilled);
 }
 
 h2 {
@@ -51,16 +67,21 @@ h2 {
   text-align  : center;
 }
 
+p.justify {
+  text-align: justify;
+}
+
 .content-container {
   display: flex;
   width: auto;
+  max-width: 700px;
   border-radius: 10px;
   flex-direction: column;
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  background-color: #A49E8D;
-  margin: 0 10%;
+  background-color: var(--content-color);
+  margin: 5% auto;
   padding-bottom: 2%;
 }
 
@@ -138,9 +159,15 @@ h2 {
   margin-right  : 4px;
   padding       : 0;
   
-  background    : rgba(238, 228, 218, 0.35);
+  /* background    : rgba(238, 228, 218, 0.35); */
+  background    : var(--cell);
   border-radius : 3px;
 }
+
+/* .grid-cell:hover {
+  height: 54px;
+  width: 54px;
+} */
 
 .grid-cell-prefilled {
   float         : left;
@@ -150,8 +177,11 @@ h2 {
   margin-right  : 4px;
   padding       : 0;
   
-  background    : rgba(110, 111, 111, 0.35);
+  /* background    : rgba(110, 111, 111, 0.35); */
+  background    : var(--cell-prefilled);
   border-radius : 3px;
+
+  cursor: auto;
 }
 
 .grid-cell:nth-child(3n+3) {
@@ -173,9 +203,9 @@ h2 {
 }
 
 input[type=submit] {
-  background-color: #4CAF50; /* Green */
+  background-color: var(--interaction-color); /* Green */
   border: none;
-  color: white;
+  color: var(--text-color-alt);
   padding: 15px 32px;
   text-align: center;
   text-decoration: none;
@@ -190,13 +220,14 @@ input[type=text], input[type=number] {
   
   background-color : transparent;
   font-size        : 30px;
-  color            : white;
+  color            : var(--text-color-alt);
   text-align       : center;
   border           : 0;
   border-color: black;
   outline          : none;
   font-weight:     : bold;
   -moz-appearance  : textfield;
+  cursor: auto;
 }
 
 input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button {
@@ -209,8 +240,6 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   justify-content: center;
   align-items: center;
   text-align: center;
-  
-  margin-top    : 40px;
   /* margin-bottom : 100px; */
 }
 
@@ -222,15 +251,56 @@ input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer
   margin-bottom : 20px;
 }
 
+a, a:hover, a:focus, a:active {
+  text-decoration: none;
+  color: inherit;
+}
+
+.about-container {
+  position: absolute;
+  right: 18px;
+  top: 10px;
+  font-size: 25px;
+
+  color: var(--content-color);
+}
+
 .footer {
   position   : fixed;
   /* display    : block; */
   bottom     : 0;
   z-index    : 3;
   width      : 100%;
-  margin-top : 150px;
+  margin-top : 100px;
   padding    : 15px;
-  background : #FCFAF9;
+  background : var(--cell);
   text-align : center;
   border-top : 3px solid grey;
+}
+
+@media(max-width: 675px) {
+  .grid-cell, .grid-cell-prefilled {
+    height        : 30px;
+    width         : 30px;
+    margin-right  : 2px;
+  }
+
+  form {
+    padding-top: 5%;
+  }
+
+  .button-container {
+    margin-top    : 40px;
+  }
+  
+  input[type=text], input[type=number] {
+    height           : 30px;
+    width            : 30px;
+    font-size        : 24px;
+  }
+
+  .content-container {
+    margin: 15% 10%;
+  }
+
 }
