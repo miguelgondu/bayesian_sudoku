@@ -35,6 +35,10 @@ p {
   margin: 1% 5%;
 }
 
+li {
+  font-size: 25px;
+}
+
 strong {
   font-weight: 900;
 }
@@ -325,6 +329,14 @@ a.printit, a.printit:hover, a.printit:hover, a.printit:active {
 
   .button-container {
     margin-top    : 40px;
+  }
+
+  p {
+    font-size: 18px;
+  }
+
+  li {
+    font-size: 18px;
   }
   
   input[type=text], input[type=number] {
