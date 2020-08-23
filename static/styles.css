@@ -283,6 +283,9 @@ a.printit, a.printit:hover, a.printit:hover, a.printit:active {
 }
 
 @media(max-width: 675px) {
+  h1 {
+    font-size: 50px;
+  }
   .grid-cell, .grid-cell-prefilled {
     height        : 30px;
     width         : 30px;
@@ -301,6 +304,32 @@ a.printit, a.printit:hover, a.printit:hover, a.printit:active {
     height           : 30px;
     width            : 30px;
     font-size        : 24px;
+  }
+
+  .content-container {
+    margin: 15% 10%;
+  }
+
+}
+@media(max-width: 600px) {
+  .grid-cell, .grid-cell-prefilled {
+    height        : 27px;
+    width         : 27px;
+    margin-right  : 1px;
+  }
+
+  form {
+    padding-top: 3%;
+  }
+
+  .button-container {
+    margin-top    : 40px;
+  }
+  
+  input[type=text], input[type=number] {
+    height           : 27px;
+    width            : 27px;
+    font-size        : 20px;
   }
 
   .content-container {
