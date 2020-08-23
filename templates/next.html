@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<p>Fill in the missing digits and send the solution.</p>
+<p>Fill in the missing digits, then click solve.</p>
 <form action="{{ url_for('solution') }}" method="post" name="sudoku-input" autocomplete="off">
   {% for i in range(sudoku | length) %}
     <div class="grid-row">

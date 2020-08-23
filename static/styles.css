@@ -311,6 +311,7 @@ a.printit, a.printit:hover, a.printit:hover, a.printit:active {
   }
 
 }
+
 @media(max-width: 600px) {
   .grid-cell, .grid-cell-prefilled {
     height        : 27px;
@@ -336,4 +337,59 @@ a.printit, a.printit:hover, a.printit:hover, a.printit:active {
     margin: 15% 10%;
   }
 
+@media(max-width: 350px) {
+  .grid-cell, .grid-cell-prefilled {
+    height        : 24px;
+    width         : 24px;
+    margin-right  : 1px;
+  }
+
+  form {
+    padding-top: 3%;
+  }
+
+  .button-container {
+    margin-top    : 40px;
+  }
+  
+  input[type=text], input[type=number] {
+    height           : 24px;
+    width            : 24px;
+    font-size        : 17px;
+  }
+
+  .content-container {
+    margin: 15% 10%;
+  }
+
 }
+
+@media(max-width: 304px) {
+  .grid-cell, .grid-cell-prefilled {
+    height        : 21px;
+    width         : 21px;
+    margin-right  : 1px;
+  }
+
+  form {
+    padding-top: 3%;
+  }
+
+  .button-container {
+    margin-top    : 40px;
+  }
+  
+  input[type=text], input[type=number] {
+    height           : 21px;
+    width            : 21px;
+    font-size        : 14px;
+  }
+
+  .content-container {
+    margin: 15% 10%;
+  }
+
+}
+
+/* 
+iphone 5 is still broken */
