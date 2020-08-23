@@ -256,6 +256,10 @@ a, a:hover, a:focus, a:active {
   color: inherit;
 }
 
+a.printit, a.printit:hover, a.printit:hover, a.printit:active {
+  color:var(--interaction-color);
+}
+
 .about-container {
   position: absolute;
   right: 18px;
