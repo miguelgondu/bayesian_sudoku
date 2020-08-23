@@ -7,7 +7,7 @@
       {% for j in range(sudoku[0] | length) %}
         {% if sudoku[i][j] == 0 %}
         <div class="grid-cell">
-          <input type="text" pattern="\d*" maxlength="1" name='solved_sudoku[{{i}}][{{j}}]' class="def-txt-input" >
+          <input type="number" oninput="if(value.length>1)value=value.slice(0,1)" name='solved_sudoku[{{i}}][{{j}}]' class="def-txt-input" >
         </div>
         {% else %}
         <div class="grid-cell-prefilled">
