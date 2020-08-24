@@ -1,4 +1,5 @@
 local_experiments.*
+local_visualize.*
 data/
 database.db
 .vscode/
