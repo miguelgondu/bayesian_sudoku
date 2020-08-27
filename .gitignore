@@ -2,6 +2,7 @@ local_experiments.*
 local_visualize.*
 data/
 database.db
+backup.csv
 .vscode/
 .DS_Store
 summarize.py
