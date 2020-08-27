@@ -11,6 +11,7 @@ from flask import Flask, render_template, request, session
 from trials import Trials
 from solution_checking import parse_data, check_solution
 from sudoku_experiment import SudokuExperiment
+from binary_search import BinarySearchExperiment
 from sudoku_utilities import sudoku_to_string
 
 try:
@@ -52,14 +53,23 @@ def next():
     hints = [81 - sudoku.count('0') for (_, _, sudoku, _, _) in solved]
     times = [took for (_, _, _, _, took) in solved]
 
-    se = SudokuExperiment(
+    # se = SudokuExperiment(
+    #     goal,
+    #     hints=hints,
+    #     times=times,
+    #     name=f"{session['user_id']}"
+    # )
+
+    # next_sudoku = se.next_sudoku()
+
+    be = BinarySearchExperiment(
         goal,
         hints=hints,
         times=times,
-        name=f"{session['user_id']}"
+        name=f"binary_{session['user_id']}"
     )
+    next_sudoku = be.next_sudoku()
 
-    next_sudoku = se.next_sudoku()
     session["start"] = time.time()
     session["next_sudoku"] = next_sudoku
     print(f"next sudoku: {next_sudoku}")

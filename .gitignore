@@ -8,6 +8,7 @@ backup.csv
 summarize.py
 visualize.py
 *.jpg
+*_plot.py
 
 # Python related stuff
 # Byte-compiled / optimized / DLL files

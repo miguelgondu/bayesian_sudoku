@@ -9,7 +9,7 @@ class Trials:
         """
         Takes a db connection.
         """
-        self.table_name = "trials"
+        self.table_name = "trials_binary"
         self.db = db
 
     def execute_query(self, query):
