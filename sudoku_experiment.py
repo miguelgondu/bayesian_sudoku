@@ -15,11 +15,13 @@ import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
 from sklearn.gaussian_process.kernels import RBF, WhiteKernel
 
+from experiment import Experiment
 from sudoku_utilities import string_to_sudoku
 
 PATH_TO_SUDOKUS = '.'
 
-class SudokuExperiment:
+
+class SudokuExperiment(Experiment):
     """
     SudokuExperiment maintains the objective time at goal, and keeps
     track of the sudokus that have been played (according to an encoding)
@@ -121,14 +123,14 @@ class SudokuExperiment:
             # (e.g. refreshing the /next page).
             next_hints = self.hints[-1]
         else:
-            next_hints = self.acquisition()
+            next_hints = self._acquisition()
 
         print(f"Deploying a sudoku with {next_hints} hints.")
-        next_sudoku = self.create_sudoku(next_hints)
+        next_sudoku = self._create_sudoku(next_hints)
 
         return next_sudoku
 
-    def acquisition(self):
+    def _acquisition(self):
         '''
         This function trains the GPR and returns the hint
         that maximizes the expected improvement.
@@ -140,13 +142,13 @@ class SudokuExperiment:
         if self.debugging:
             return 80
 
-        ei = self.expected_improvement()
+        ei = self._expected_improvement()
         next_hints = int(self.domain[np.argmax(ei)])
 
         self.hints.append(next_hints)
         return next_hints
 
-    def expected_improvement(self, return_mu_and_sigma=False):
+    def _expected_improvement(self, return_mu_and_sigma=False):
         """
         Computes the EI by sampling.
         """
@@ -175,7 +177,7 @@ class SudokuExperiment:
     def _g(self, t):
         return - (np.exp(t) - self.goal) ** 2
 
-    def compute_real_and_variance_maps(self):
+    def _compute_real_and_variance_maps(self):
         """
         Could be optimized further.
         """
@@ -191,7 +193,7 @@ class SudokuExperiment:
 
         return real_map, variance_map
 
-    def create_sudoku(self, hints):
+    def _create_sudoku(self, hints):
         # TODO: once we implement a database, we can change this
         # s.t. we don't serve the same sudoku twice for a player.
         # Chances are slim, though.
@@ -221,7 +223,7 @@ class SudokuExperiment:
         # ax1 for mean
         to_plot = None
         if len(self.times) > 0:
-            real_map, variance_map = self.compute_real_and_variance_maps()
+            real_map, variance_map = self._compute_real_and_variance_maps()
             title1 = "real map"
             to_plot = real_map
             sigma = variance_map
@@ -250,7 +252,7 @@ class SudokuExperiment:
 
         prior = self.prior.reshape(-1, 1)
         # ax2 for acquisition function
-        ei, mu, sigma, g_samples = self.expected_improvement(return_mu_and_sigma=True)
+        ei, mu, sigma, g_samples = self._expected_improvement(return_mu_and_sigma=True)
         # print("visualize:")
         # print(f"mu: {mu}")
         # print(f"sigma: {sigma}")
