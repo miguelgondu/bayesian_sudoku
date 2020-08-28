@@ -3,6 +3,7 @@ local_visualize.*
 data/
 database.db
 backup.csv
+backup_binary.csv
 .vscode/
 .DS_Store
 summarize.py
