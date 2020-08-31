@@ -1,9 +1,11 @@
 local_experiments.*
 local_visualize.*
+local_plotting.*
 data/
 database.db
 backup.csv
 backup_binary.csv
+backup_binary_2.csv
 .vscode/
 .DS_Store
 summarize.py
