@@ -2,6 +2,8 @@ local_experiments.*
 local_visualize.*
 local_plotting.*
 data/
+backups/
+notebooks/
 database.db
 backup.csv
 backup_binary.csv

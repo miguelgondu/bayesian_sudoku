@@ -12,6 +12,7 @@ from trials import Trials
 from solution_checking import parse_data, check_solution
 from sudoku_experiment import SudokuExperiment
 from binary_search import BinarySearchExperiment
+from linear_regression_experiment import LinearRegressionExperiment
 from sudoku_utilities import sudoku_to_string
 
 try:
@@ -62,13 +63,20 @@ def next():
 
     # next_sudoku = se.next_sudoku()
 
-    be = BinarySearchExperiment(
+    # be = BinarySearchExperiment(
+    #     goal,
+    #     hints=hints,
+    #     times=times,
+    #     name=f"binary_{session['user_id']}"
+    # )
+    # next_sudoku = be.next_sudoku()
+
+    lre = LinearRegressionExperiment(
         goal,
         hints=hints,
-        times=times,
-        name=f"binary_{session['user_id']}"
+        times=times
     )
-    next_sudoku = be.next_sudoku()
+    next_sudoku = lre.next_sudoku()
 
     session["start"] = time.time()
     session["next_sudoku"] = next_sudoku
