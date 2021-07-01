@@ -6,12 +6,14 @@ backups/
 notebooks/
 database.db
 backup.csv
+backup_regression.csv
 backup_binary.csv
 backup_binary_2.csv
 .vscode/
 .DS_Store
 summarize.py
 visualize.py
+visualize_regression.py
 *.jpg
 *_plot.py
 

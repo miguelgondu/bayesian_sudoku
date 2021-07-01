@@ -17,6 +17,7 @@ from sudoku_utilities import sudoku_to_string
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except ModuleNotFoundError:
     print("Couldn't load the local .env file.")
@@ -24,7 +25,7 @@ except ModuleNotFoundError:
 app = Flask(__name__)
 
 # Squelch a warning
-plt.switch_backend('Agg')
+plt.switch_backend("Agg")
 
 # Load variables
 app.secret_key = os.environ["SECRET_KEY"]
@@ -51,17 +52,11 @@ def next():
     db = psycopg2.connect(db_url)
     trials = Trials(db)
     solved = trials.get_solved_for_user(session["user_id"])
-    hints = [81 - sudoku.count('0') for (_, _, sudoku, _, _) in solved]
+    hints = [81 - sudoku.count("0") for (_, _, sudoku, _, _) in solved]
     times = [took for (_, _, _, _, took) in solved]
 
-    # se = SudokuExperiment(
-    #     goal,
-    #     hints=hints,
-    #     times=times,
-    #     name=f"{session['user_id']}"
-    # )
-
-    # next_sudoku = se.next_sudoku()
+    se = SudokuExperiment(goal, hints=hints, times=times, name=f"{session['user_id']}")
+    next_sudoku = se.next_sudoku()
 
     # be = BinarySearchExperiment(
     #     goal,
@@ -71,12 +66,12 @@ def next():
     # )
     # next_sudoku = be.next_sudoku()
 
-    lre = LinearRegressionExperiment(
-        goal,
-        hints=hints,
-        times=times
-    )
-    next_sudoku = lre.next_sudoku()
+    # lre = LinearRegressionExperiment(
+    #     goal,
+    #     hints=hints,
+    #     times=times
+    # )
+    # next_sudoku = lre.next_sudoku()
 
     session["start"] = time.time()
     session["next_sudoku"] = next_sudoku
@@ -103,14 +98,12 @@ def solution():
         session["user_id"],
         sudoku_to_string(session["next_sudoku"]),
         solved,
-        time_it_took
+        time_it_took,
     )
 
     return render_template(
-        "solution.html",
-        solved=solved,
-        message=message,
-        time_it_took=int(time_it_took))
+        "solution.html", solved=solved, message=message, time_it_took=int(time_it_took)
+    )
 
 
 @app.route("/about")
