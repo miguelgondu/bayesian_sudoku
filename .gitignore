@@ -9,6 +9,7 @@ backup.csv
 backup_regression.csv
 backup_binary.csv
 backup_binary_2.csv
+sudoku_*.csv
 .vscode/
 .DS_Store
 summarize.py
