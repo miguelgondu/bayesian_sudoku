@@ -1,25 +1,7 @@
 # Sudoku web-app with Bayesian Optimization
 
-This repo contains the code for the first experiment of the paper we plan to write for AAAI 2020. This experiment, summarized, consists of a sudoku web app that optimizes the sudokus it serves for them to be solved in a given time.
+This repo contains the code for the web application used in the first experiment of the paper [*Fast Game Content Adaptation Through Bayesian-based Player Modelling*](https://arxiv.org/abs/2105.08484), published in CoG 2021. This experiment, summarized, consists of a sudoku web app that optimizes the sudokus it serves for them to be solved in a given time.
 
-## Running the sudoku web app
+## A guide to the code
 
-Create a virtual environment (if you want) and install the requirements with
-
-```
-pip install -r requirements.txt
-```
-
-Run
-
-```
-python app.py
-```
-
-and load the webpage that's being served. That should work!
-
-## After running the sudoku web app
-
-After running some iterations, you can find visualizations of the time-curve getting updated in `./data/images`.
-
-TODO: add some details about the database.
+The experiments are implemented in `binary_search.py`, `linear_regression_experiment.py` and `sudoku_experiment.py`. These contain the logic behind serving a sudoku given some data. For the app itself, I used Flask and Heroku. The relevant bits are in `app.py`, `templates/` and `trials.py` for the database connections (implemented with postgres).
